@@ -1,0 +1,26 @@
+{
+    "name": "remix-slither-plugin",
+    "version": "0.0.1",
+    "description": "Sliter plugin for Remix",
+    "main": "dist",
+    "scripts": {
+        "dev": "nodemon -w src --exec \"babel-node src --presets es2015,stage-0\"",
+        "prestart": "npm run -s build",
+        "start": "node dist"
+    },
+    "devDependencies": {
+        "babel-core": "^6.26.3",
+        "babel-loader": "^8.0.4",
+        "babel-preset-env": "^1.7.0",
+        "babel-preset-es2015": "^6.24.1",
+        "babel-preset-stage-0": "^6.24.1",
+        "nodemon": "^1.18.7"
+    },
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "cors": "^2.8.5",
+        "express": "^4.16.4",
+        "morgan": "^1.9.1",
+        "shelljs": "^0.8.3"
+    }
+}
