@@ -44,7 +44,7 @@
 	<body>
 		<div class="row" style="background: hsla(202, 91%, 75%, 1)">
 			<div class="container">
-				<h2>Slither v0.5.1</h2>
+				<h2>Slither <small>v0.3.1</small></h2>
 				<p>
 					<button id="analyze" type="button" class="btn btn-success">
 						Analyze
@@ -56,12 +56,12 @@
 			</div>
 		</div>
 		<div class="collapse" id="collapseExample">
-			<div class="card card-body">
+			<div class="card card-body" style="background: hsla(202, 91%, 75%, 1); border-radius: 0; border: none">
 				<form class="">
 					<div class="form-group">
-						<label for="exampleFormControlInput1">Exclude Files</label>
-						<input type="email" class="form-control mx-xs-2" id="exampleFormControlInput1" placeholder="Migrations.sol">
-						<small id="passwordHelpBlock" class="form-text text-muted">
+						<label for="exclude-files">Exclude Files</label>
+						<input type="email" class="form-control mx-xs-2" id="exclude-files" placeholder="Migrations.sol">
+						<small id="excludeFilesHelpBlock" class="form-text text-muted">
 							Files to exclude from slither analysis separated by comma
 						</small>
 					</div>
@@ -69,16 +69,16 @@
 				<h5>Detectors</h5>
 				<form class="">
 					<div class="form-group">
-						<label for="exampleFormControlInput1">Disable Detectors</label>
-						<input type="email" class="form-control mx-xs-1\2" id="exampleFormControlInput1" placeholder="Migrations.sol">
-						<small id="passwordHelpBlock" class="form-text text-muted">
+						<label for="disable-detectors">Disable Detectors</label>
+						<input type="email" class="form-control mx-xs-1\2" id="disable-detectors" placeholder="Migrations.sol">
+						<small id="disbaleDetectorHelpBlock" class="form-text text-muted">
 							Files to exclude from slither analysis separated by comma
 						</small>
 					</div>
 					<div class="form-group">
-						<label for="exampleFormControlInput1">Enable Detectors</label>
-						<input type="email" class="form-control mx-xs-2" id="exampleFormControlInput1" placeholder="Migrations.sol">
-						<small id="passwordHelpBlock" class="form-text text-muted">
+						<label for="enable-detectors">Enable Detectors</label>
+						<input type="email" class="form-control mx-xs-2" id="enable-detectors" placeholder="Migrations.sol">
+						<small id="enableDetectorHelpBlock" class="form-text text-muted">
 							Files to exclude from slither analysis separated by comma
 						</small>
 					</div>
@@ -92,7 +92,8 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div> -->
-			<div id="results" style="height: 600px"></div>
+			<div id="results" class="text-center" style="height: 600px; margin-top: 20px">
+			</div>
 		</div>
 
 		

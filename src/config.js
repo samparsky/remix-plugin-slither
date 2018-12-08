@@ -44,10 +44,5 @@ module.exports = {
         "pragma": "informational",
         "solc-version": "informational",
         "unused-state": "informational"
-    },
-    color: {
-        "high": "alert-danger",
-        "medium": "alert-warning",
-        "informational": "alert-info"
     }
 }

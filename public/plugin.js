@@ -2,10 +2,83 @@
 const extension = new window.RemixExtension()
 let compileMsg = "<i class=\"fa fa-spinner fa-spin\"></i> Checking successful compilation"
 
-function handleCompileFailure(error, analysisType) {
-  document.querySelector('div#results').innerHTML = error;
+async function do_post(url, data, cb) {
+  console.log(`host ${window.location.origin}`)
+  const serverUrl  = `${window.location.origin}` + url
+  try{
+    const response =  await (await fetch(serverUrl, { method: 'POST', headers: { "Content-Type": "application/json; charset=utf-8"}, body: JSON.stringify(data)})).json();
+    cb(response);
+  }
+  catch (error) {
+    console.log(error);
+  } 
 }
 
+function handleCompileFailure(error) {
+  html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Compilation Failed!</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>`
+
+  document.querySelector('div#results').innerHTML = error || html;
+}
+
+function displayError(error){
+  const color = {
+    "high": "alert-danger",
+    "medium": "alert-warning",
+    "informational": "alert-info"
+  }
+  const html = error.map((err)=>{
+    `<div class="alert ${color[err.check]} alert-dismissible fade show" role="alert">
+    <strong>${err.type}!</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>`
+  })
+  for(err in error) {
+    switch(level){
+      case "information":
+
+      case "medium":
+      case "high":
+    }
+  }
+}
+
+function handleCompileSuccess(disableDetectors, enableDetectors, result) {
+  if(result[0] == null){
+    html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Compilation Failed!</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>`
+    document.querySelector('div#results').innerHTML = html;
+  } else {
+    const { source, data} = result[0]
+    do_post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
+      console.log(res)
+      if(res['error']){
+
+      }
+      document.querySelector('div#results').innerHTML = res['output'];
+    });
+  }
+  console.log(result)
+}
+
+const disableInput = (id) => $(id).attr("disabled", true)
+const enableInput = (id) => $(id).attr("disabled", false)
+const getValue = (id) => $(id).val()
+
+function params(id){
+  disableInput(id);
+  return getValue(id);
+}
 
 window.onload = function () {
   extension.listen('compiler', 'compilationFinished', function () {
@@ -20,14 +93,19 @@ window.onload = function () {
     var div = document.querySelector('div#results');
     div.innerHTML = compileMsg;
     console.log("analyzing smart contract bugs")
-    extension.call('compiler', 'getCompilationResult', [],function (error, result ) {
+    extension.call('compiler', 'getCompilationResult', [], function (error, result ) {
       console.log({result})
       console.log({error})
         if(result) {
-          // handleCompileSuccess(result);
-        }
-        else{
-          // handleCompileFailure(error);
+          let disableDetectors = params('#disable-detectors')
+          let enableDetectors = params('#enable-detectors')
+          // let excludeFiles = params()
+          console.log({disableDetectors})
+          console.log({enableDetectors})
+          handleCompileSuccess(disableDetectors, enableDetectors, result);
+
+        } else{
+          handleCompileFailure(error);
         }
     });
   });
