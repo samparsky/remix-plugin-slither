@@ -17,7 +17,18 @@ $ npm install -g remix-slitherd
 
 ### Start
 
-```console
+```sh
+$ slitherd -h
+
+Usage: slitherd [options]
+
+Options:
+  -V, --version  output the version number
+  -p, --port     Server port
+  -h, --help     output usage information
+```
+
+```sh
 $ slitherd -p 8080
 
     Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
