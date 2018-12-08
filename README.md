@@ -5,19 +5,19 @@
 
 #### Slither
 
-```bash
+```console
 $ pip install slither-analyzer
 ```
 
 Install Remix plugin
 
-```bash
+```console
 $ npm install -g remix-slitherd
 ```
 
 ### Start
 
-```bash
+```console
 $ slitherd -p 8080
 
     Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
