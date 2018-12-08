@@ -26,27 +26,45 @@ function handleCompileFailure(error) {
 }
 
 function displayError(error){
+ const impact = {
+    "suicidal": "high",
+    "uninitialized-state": "high",
+    "uninitialized-storage": "high",
+    "arbitrary-send": "high",
+    "controlled-delegatecall": "high",
+    "reentrancy": "high",
+    "locked-ether": "high",
+    "constant-function": "high",
+    "tx-origin": "medium",
+    "uninitialized-local": "medium",
+    "unused-return": "medium",
+    "assembly": "informational",
+    "constable-states": "informational",
+    "external-function": "informational",
+    "low-level-calls": "informational",
+    "naming-convention": "informational",
+    "pragma": "informational",
+    "solc-version": "informational",
+    "unused-state": "informational",
+    "backdoor": "high",
+  }
+
   const color = {
-    "high": "alert-danger",
-    "medium": "alert-warning",
+    "high":          "alert-danger",
+    "medium":        "alert-warning",
     "informational": "alert-info"
   }
-  const html = error.map((err)=>{
-    `<div class="alert ${color[err.check]} alert-dismissible fade show" role="alert">
-    <strong>${err.type}!</strong>
+
+  const html = error.map((err)=>(
+    `<div class="alert ${color[impact[err.check]]} alert-dismissible fade show" role="alert">
+    <strong>${err.message}!</strong>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>`
-  })
-  for(err in error) {
-    switch(level){
-      case "information":
+  ))
 
-      case "medium":
-      case "high":
-    }
-  }
+  return html.reduce((total, item) => `${total} ${item}`)
 }
 
 function handleCompileSuccess(disableDetectors, enableDetectors, result) {
@@ -62,10 +80,13 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
     const { source, data} = result[0]
     do_post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
       console.log(res)
+      let result
       if(res['error']){
-
+        result = displayError(res['error'])
+      } else {
+        reult = `No issues`
       }
-      document.querySelector('div#results').innerHTML = res['output'];
+      document.querySelector('div#results').innerHTML = result;
     });
   }
   console.log(result)

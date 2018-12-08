@@ -7,7 +7,7 @@ const isValid = (obj) => !isEmpty(obj) && !isUndefined(obj) && !isNull(obj)
 
 
 function errorMessage(data) {
-    let message = ""
+    let message = "hello world"
     const {check, type, expressions, convention  } = data
 
     switch(check) {
