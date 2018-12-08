@@ -28,7 +28,17 @@ app.use(function(err, req, res, next) {
 app.post('/analyze', analyzeRouter);
 
 app.server.listen(process.env.PORT || config.port, () => {
-    console.log(`Started on port ${app.server.address().port}`);
+    let port = app.server.address().port
+    console.log(`Started on port ${port}`);
+    console.log(`
+    Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
+    under the Plugin section paste the following declaration:\n
+    {
+        "title": "slither anaylsis",
+        "url": "http://127.0.0.1:${port}"
+    }\n
+    Then start the plugin by licking on its icon.
+    `)
 });
 
 export default app;
