@@ -37,7 +37,7 @@ function goToLine(error){
     index = parseInt(index)
     const item = error[index]
     const func = item['function'];
-    const position = JSON.stringify({"start":{"line": func['source_mapping']['lines'][0]}, "end": {"line": func['source_mapping']['lines'][ func['source_mapping']['lines'].length - 1]} })
+    const position = JSON.stringify({"start":{"line": (func['source_mapping']['lines'][0] == 0) ? 0 : (func['source_mapping']['lines'][0]-1) }, "end": {"line": func['source_mapping']['lines'][ func['source_mapping']['lines'].length - 1]} })
     extension.call('editor', 'highlight', [position, func['source_mapping']['filename'], "#f60"], function(err, result){
       console.log(err)
       console.log({result})
