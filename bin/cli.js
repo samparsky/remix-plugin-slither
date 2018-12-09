@@ -3,7 +3,7 @@ const exec = require("child_process").exec
 
 program
     .name("slitherd")
-    .version('0.1.0')
+    .version("0.1.0")
     .option('-p, --port', 'Server port', parseInt)
     .parse(process.argv);
 

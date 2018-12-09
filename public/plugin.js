@@ -1,6 +1,6 @@
 
 const extension = new window.RemixExtension()
-let compileMsg = "<i class=\"fa fa-spinner fa-spin\"></i> Checking successful compilation"
+let compileMsg = "<p class=\"text-center\" ><i class=\"fa fa-spinner fa-spin\"></i> Checking successful compilation</p>"
 
 async function do_post(url, data, cb) {
   console.log(`host ${window.location.origin}`)
@@ -49,15 +49,35 @@ function displayError(error){
     "backdoor": "high",
   }
 
+  const order = {
+    "informational": 0,
+    "medium": 1,
+    "high": 2,
+  }
+
   const color = {
     "high":          "alert-danger",
     "medium":        "alert-warning",
     "informational": "alert-info"
   }
 
+  error = error.sort(function(x, y){
+    console.log({x})
+    console.log({y})
+    if(order[impact[x.check]] < order[impact[y.check]]){
+      return -1
+    }
+
+    if(order[impact[x.check]] > order[impact[y.check]]){
+      return 1
+    }
+
+    return 0
+  })
+
   const html = error.map((err)=>(
-    `<div class="alert ${color[impact[err.check]]} alert-dismissible fade show" role="alert">
-    <strong>${err.message}!</strong>
+    `<div class="alert ${color[impact[err.check]]} alert-dismissible fade show" style="text-align: left!important" role="alert">
+    <p>${err.message}</p>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>

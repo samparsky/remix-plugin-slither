@@ -41,3 +41,7 @@ $ slitherd -p 8080
 
     Then start the plugin by licking on its icon.
 ```
+
+License
+-------
+MIT

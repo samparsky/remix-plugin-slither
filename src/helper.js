@@ -21,6 +21,10 @@ function errorMessage(data) {
             message = ``
             break
         case "arbitrary-send":
+            
+        // <pre><code>
+        // My pre-formatted "quoted" code here.
+        // </code></pre>
             break
         case "controlled-delegatecall":
             break

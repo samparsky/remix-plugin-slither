@@ -9,12 +9,12 @@ const analyzeRouter = async function(req, res, next){
 
     const contract = sources[target].content;
     const fileName = target.split('/').pop();
-    const fileDir = `/tmp/${path.dirname(target)}`;
+    const fileDir = `${path.dirname(target)}`;
     shell.mkdir('-p', fileDir);
     console.log({fileDir})
     const filePath = fileDir + '/'+fileName;
     console.log({filePath})
-    const outputFile = `/tmp/${path.dirname(target)}/output.json`
+    const outputFile = `${path.dirname(target)}/output.json`
 
     let response = {
         "output": null,
@@ -49,7 +49,6 @@ const analyzeRouter = async function(req, res, next){
         
         let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
         console.log(fs.readFileSync(outputFile, 'utf8'))
-        data = data.map(d => errorMessage(d))
         response.error = data
 
         return res.status(500).json(response)
@@ -57,7 +56,7 @@ const analyzeRouter = async function(req, res, next){
     } finally {
         // delete file
         await fs.unlinkSync(filePath)
-        await fs.unlinkSync(outputFile)
+        // await fs.unlinkSync(outputFile)
     }
 }
 
