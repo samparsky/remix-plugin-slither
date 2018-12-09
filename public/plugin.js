@@ -1,6 +1,10 @@
 
 const extension = new window.RemixExtension()
 let compileMsg = "<p class=\"text-center\" ><i class=\"fa fa-spinner fa-spin\"></i> Checking successful compilation</p>"
+let global_err = []
+let line = function(){
+  console.log('sdagsas')
+}
 
 async function do_post(url, data, cb) {
   console.log(`host ${window.location.origin}`)
@@ -25,7 +29,24 @@ function handleCompileFailure(error) {
   document.querySelector('div#results').innerHTML = error || html;
 }
 
+
+function goToLine(error){
+  console.log({error})
+  return function(index){
+    console.log("working ofr Gord")
+    index = parseInt(index)
+    const item = error[index]
+    const func = item['function'];
+    const position = JSON.stringify({"start":{"line": func['source_mapping']['lines'][0]}, "end": {"line": func['source_mapping']['lines'][ func['source_mapping']['lines'].length - 1]} })
+    extension.call('editor', 'highlight', [position, func['source_mapping']['filename'], "#f60"], function(err, result){
+      console.log(err)
+      console.log({result})
+    })
+  }
+}
+
 function displayError(error){
+
  const impact = {
     "suicidal": "high",
     "uninitialized-state": "high",
@@ -62,23 +83,21 @@ function displayError(error){
   }
 
   error = error.sort(function(x, y){
-    console.log({x})
-    console.log({y})
     if(order[impact[x.check]] < order[impact[y.check]]){
       return -1
-    }
-
-    if(order[impact[x.check]] > order[impact[y.check]]){
+    } else if (order[impact[x.check]] > order[impact[y.check]]){
       return 1
     }
-
     return 0
   })
 
-  const html = error.map((err)=>(
-    `<div class="alert ${color[impact[err.check]]} alert-dismissible fade show" style="text-align: left!important" role="alert">
-    <p>${err.message}</p>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+  line = goToLine(error)
+
+  var regex = /\/t/gi;
+  const html = error.map((err, index)=>(
+    `<div class="alert ${color[impact[err.check]]} onclick="line(${index})" alert-dismissible fade show" style="text-align: left!important" role="alert">
+    <p onclick="line(${index})" style="font-size: 12px">${err.message}</p>
+    <button  type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>`
@@ -102,6 +121,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
       console.log(res)
       let result
       if(res['error']){
+        global_err = res['error']
         result = displayError(res['error'])
       } else {
         reult = `No issues`
@@ -130,6 +150,7 @@ window.onload = function () {
   })
 
   document.querySelector('button#analyze').addEventListener('click', function () {
+    goToLine()
     $('#collapseExample').collapse('hide');
     var div = document.querySelector('div#results');
     div.innerHTML = compileMsg;
@@ -151,40 +172,4 @@ window.onload = function () {
     });
   });
 
-  // setInterval(function () {
-  //   extension.call('app', 'detectNetWork', [], function (error, result) {
-  //     console.log(error, result)
-  //   })
-  // }, 5000)
-
-  // document.querySelector('input#testmessageadd').addEventListener('click', function () {
-  //   extension.call('config', 'setConfig', [document.getElementById('filename').value, document.getElementById('valuetosend').value],
-  //   function (error, result) { console.log(error, result) })
-  // })
-
-  // document.querySelector('input#testmessageremove').addEventListener('click', function () {
-  //   extension.call('config', 'removeConfig', [document.getElementById('filename').value],
-  //   function (error, result) { console.log(error, result) })
-  // })
-
-  // document.querySelector('input#testmessagerget').addEventListener('click', function () {
-  //   extension.call('config', 'getConfig', [document.getElementById('filename').value],
-  //   function (error, result) { console.log(error, result) })
-  // })
-
-  // document.querySelector('input#testcontractcreation').addEventListener('click', function () {
-  //   extension.call('udapp', 'runTx', [addrResolverTx],
-  //   function (error, result) { console.log(error, result) })
-  // })
-
-  // document.querySelector('input#testaccountcreation').addEventListener('click', function () {
-  //   extension.call('udapp', 'createVMAccount', ['71975fbf7fe448e004ac7ae54cad0a383c3906055a75468714156a07385e96ce', '0x56BC75E2D63100000'],
-  //   function (error, result) { console.log(error, result) })
-  // })
-
-  // var k = 0
-  // document.querySelector('input#testchangetitle').addEventListener('click', function () {
-  //   extension.call('app', 'updateTitle', ['changed title ' + k++],
-  //   function (error, result) { console.log(error, result) })
-  // })
 }
