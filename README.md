@@ -1,5 +1,7 @@
 # Remix IDE Slither Plugin
 
+### Requirements
+* Slither > 0.3.1
 
 ### Install 
 
@@ -8,11 +10,15 @@
 ```console
 $ pip install slither-analyzer
 ```
-
-Install Remix plugin
+#### Upgrade Sliter
 
 ```console
-$ npm install -g remix-slitherd
+$ pip install slither-analyzer --upgrade
+```
+### Install Remix plugin
+
+```console
+$ npm install -g remix-slither
 ```
 
 ### Start

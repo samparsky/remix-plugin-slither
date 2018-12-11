@@ -16,7 +16,13 @@ const compareSlitherVersion = (majorVesion, minorVersion, patch ) => (
 
 
 const checkSlitherVersion = async (isDev) => {
-    if(isDev) return true
+    if(isDev) {
+        console.log(
+            chalk.greenBright("\n\tRunning in dev mode")
+        )
+        return true
+    }
+
     try {
         let { stdout } = await exec(`slither --version`)
         let version = (stdout.replace(/\r?\n|\r/g, "")

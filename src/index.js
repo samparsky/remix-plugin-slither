@@ -29,24 +29,4 @@ app.use(function(err, req, res, next) {
 
 app.post('/analyze', analyzeRouter);
 
-app.server.listen(process.env.PORT || port, async () => {
-    let port = app.server.address().port
-    let isDev = false;
-
-    const slitherVersion = await checkSlitherVersion(isDev);
-    if(!slitherVersion) process.exit(1)
-
-    console.log(
-        chalk.greenBright(`
-        Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
-        under the Plugin section paste the following declaration:\n
-        {
-            "title": "slither anaylsis",
-            "url": "http://<machine_ip>:${port}"
-        }\n
-        Then start the plugin by licking on its icon.
-        `)
-    )
-});
-
-export default app;
+module.exports = app;
