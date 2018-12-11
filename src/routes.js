@@ -22,6 +22,7 @@ const analyzeRouter = async function(req, res, next){
     }
 
     let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
+    
     if(enableDetectors){
         cmd = `${cmd} --detect ${enableDetectors}`
     }
@@ -33,8 +34,6 @@ const analyzeRouter = async function(req, res, next){
     try {
         fs.writeFileSync(filePath, contract);
         let {stdout, stderr} = await exec(cmd)
-        console.log({stdout})
-        console.log({stderr})
 
         // parse json file and return response
         const data = fs.readFileSync(outputFile)

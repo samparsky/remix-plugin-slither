@@ -1,72 +1,50 @@
 import { isEmpty, isNull, isUndefined } from "underscore"
+import {slitherVersion} from "./config"
+import chalk from "chalk"
 import util from "util"
+
 
 const exec = util.promisify(require("child_process").exec)
 
 const isValid = (obj) => !isEmpty(obj) && !isUndefined(obj) && !isNull(obj)
 
+const compareSlitherVersion = (majorVesion, minorVersion, patch ) => (
+                                            majorVesion >= slitherVersion.majorVersion && 
+                                            minorVersion >= slitherVersion.minorVersion && 
+                                            patch >= slitherVersion.patch
+)
 
-function errorMessage(data) {
-    let message = "hello world"
-    const {check, type, expressions, convention  } = data
 
-    switch(check) {
-        case "suicidal":
-            message = `{}.${name} (${location}) allows anyone to destruct the contract`
-            break
-        case "uninitialized-state":
-            message = ``
-            break
-        case "uninitialized-storage":
-            message = ``
-            break
-        case "arbitrary-send":
-            
-        // <pre><code>
-        // My pre-formatted "quoted" code here.
-        // </code></pre>
-            break
-        case "controlled-delegatecall":
-            break
-        case "reentrancy":
-            break
-        case "locked-ether":
-            break
-        case "constant-function":
-            break
-        case "tx-origin":
-            break
-        case "uninitialized-local":
-            break
-        case "unused-return":
-            message = `${name} (${location}) does not use the value returned by external calls:`
-            // for(node in )
-        case "assembly":
-            break
-        case "constable-states":
-            break
-        case "external-function":
-            let name = data['function']['name']
-            let len = data['function']['source_mapping'].length;
-            let location = `#${data['function']['source_mapping'][0]}-#${data['function']['source_mapping'][len-1]}`
-
-            message = `${name} (${location}) should be declared external`
-            break
-        case "low-level-calls":
-            break
-        case "naming-convention":
-            message = `Parameter ${name}`
-            break
-        case "pragma":
-            break
-        case "solc-version":
-            break
-        case "unused-state":
-            break
+const checkSlitherVersion = async (isDev) => {
+    if(isDev) return true
+    try {
+        let { stdout } = await exec(`slither --version`)
+        let version = (stdout.replace(/\r?\n|\r/g, "")
+                        .split('.'))
+                        .map( 
+                            (item) => parseInt(item) 
+                        )
+        let checkVersion = compareSlitherVersion(...version)
+        if(!checkVersion){
+            console.log(
+                chalk.redBright(`
+                    Slither Version required >= ${slitherVersion.majorVersion}.${slitherVersion.minorVersion}.${slitherVersion.patch}\n
+                    Version Present: ${version.join(".")} \n
+                    Please upgrade your slither "pip install slither-analyzer --upgrade"
+                `
+                )
+            )
+            return false
+        }
+    } catch(e){
+        console.log(
+            chalk.redBright(`
+                Slither Installation Required
+                Please install slither ${chalk.greenBright("pip install slither-analyzer")}
+            `)
+        )
+        return false
     }
-
-    data['message'] = message
-    return data
+    return true
 }
-
-export { exec, isValid, errorMessage }
+export { exec, isValid, checkSlitherVersion }

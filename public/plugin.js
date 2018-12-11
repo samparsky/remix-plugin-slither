@@ -1,12 +1,22 @@
 
 const extension = new window.RemixExtension()
-let compileMsg = "<p class=\"text-center\" ><i class=\"fa fa-spinner fa-spin\"></i> Checking successful compilation</p>"
+let compileMsg = function(type, filename){
+  switch(type){
+    case 1:
+      return `<p class=\"text-center\" ><i class=\"fa fa-spinner fa-spin\"></i> Loading files...</p>`
+    case 2:
+      return `<p class=\"text-center\" ><i class=\"fa fa-spinner fa-spin\"></i> Analyzing <strong>${filename}</strong> ...</p>`
+    default:
+      return ""
+  }
+  
+}
 let global_err = []
 let line = function(){
   console.log('sdagsas')
 }
 
-async function do_post(url, data, cb) {
+async function post(url, data, cb) {
   console.log(`host ${window.location.origin}`)
   const serverUrl  = `${window.location.origin}` + url
   try{
@@ -47,29 +57,6 @@ function goToLine(error){
 
 function displayError(error){
 
- const impact = {
-    "suicidal": "high",
-    "uninitialized-state": "high",
-    "uninitialized-storage": "high",
-    "arbitrary-send": "high",
-    "controlled-delegatecall": "high",
-    "reentrancy": "high",
-    "locked-ether": "high",
-    "constant-function": "high",
-    "tx-origin": "medium",
-    "uninitialized-local": "medium",
-    "unused-return": "medium",
-    "assembly": "informational",
-    "constable-states": "informational",
-    "external-function": "informational",
-    "low-level-calls": "informational",
-    "naming-convention": "informational",
-    "pragma": "informational",
-    "solc-version": "informational",
-    "unused-state": "informational",
-    "backdoor": "high",
-  }
-
   const order = {
     "informational": 0,
     "medium": 1,
@@ -83,9 +70,9 @@ function displayError(error){
   }
 
   error = error.sort(function(x, y){
-    if(order[impact[x.check]] < order[impact[y.check]]){
+    if(order[x.impact] < order[y.impact]){
       return -1
-    } else if (order[impact[x.check]] > order[impact[y.check]]){
+    } else if (order[x.impact] > order[y.impact]){
       return 1
     }
     return 0
@@ -93,10 +80,9 @@ function displayError(error){
 
   line = goToLine(error)
 
-  var regex = /\/t/gi;
   const html = error.map((err, index)=>(
-    `<div class="alert ${color[impact[err.check]]} onclick="line(${index})" alert-dismissible fade show" style="text-align: left!important" role="alert">
-    <p onclick="line(${index})" style="font-size: 12px">${err.message}</p>
+    `<div class="alert ${color[err.impact]} onclick="line(${index})" alert-dismissible fade show" style="text-align: left!important" role="alert">
+    <a href="#" onclick="line(${index})" style="font-size: 12px">${err.description}</a>
     <button  type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -117,7 +103,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
     document.querySelector('div#results').innerHTML = html;
   } else {
     const { source, data} = result[0]
-    do_post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
+    post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
       console.log(res)
       let result
       if(res['error']){
@@ -126,6 +112,9 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
       } else {
         reult = `No issues`
       }
+      
+      let heading = document.querySelector('div#file');
+      heading.innerHTML = `<h6>Results: ${source['target']}</h6>`
       document.querySelector('div#results').innerHTML = result;
     });
   }
@@ -150,25 +139,31 @@ window.onload = function () {
   })
 
   document.querySelector('button#analyze').addEventListener('click', function () {
-    goToLine()
+    disableInput("#analyze")
     $('#collapseExample').collapse('hide');
-    var div = document.querySelector('div#results');
-    div.innerHTML = compileMsg;
+    let div = document.querySelector('div#results');
+    div.innerHTML = compileMsg(1);
     console.log("analyzing smart contract bugs")
     extension.call('compiler', 'getCompilationResult', [], function (error, result ) {
       console.log({result})
       console.log({error})
         if(result) {
+          const filename = result[0]['source']['target'];
           let disableDetectors = params('#disable-detectors')
           let enableDetectors = params('#enable-detectors')
           // let excludeFiles = params()
+          div.innerHTML = compileMsg(2, filename);
+
           console.log({disableDetectors})
           console.log({enableDetectors})
           handleCompileSuccess(disableDetectors, enableDetectors, result);
-
         } else{
           handleCompileFailure(error);
         }
+
+        enableInput("#analyze")
+        enableInput('#enable-detectors')
+        enableInput('#disable-detectors')
     });
   });
 

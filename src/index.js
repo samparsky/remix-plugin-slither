@@ -2,15 +2,17 @@ import http from "http";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import config from "./config.js";
+import chalk from "chalk"
+import {port, corsHeaders, slitherVersion } from "./config.js";
 import { analyzeRouter } from "./routes"
+import { isValid, exec, checkSlitherVersion } from "./helper"
 
 let app = express();
 app.server = http.createServer(app);
 
 app.use(morgan("dev"));
 app.use(cors({
-	exposedHeaders: config.corsHeaders
+	exposedHeaders: corsHeaders
 }));
 
 app.use(express.urlencoded({
@@ -27,18 +29,24 @@ app.use(function(err, req, res, next) {
 
 app.post('/analyze', analyzeRouter);
 
-app.server.listen(process.env.PORT || config.port, () => {
+app.server.listen(process.env.PORT || port, async () => {
     let port = app.server.address().port
-    console.log(`Started on port ${port}`);
-    console.log(`
-    Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
-    under the Plugin section paste the following declaration:\n
-    {
-        "title": "slither anaylsis",
-        "url": "http://127.0.0.1:${port}"
-    }\n
-    Then start the plugin by licking on its icon.
-    `)
+    let isDev = false;
+
+    const slitherVersion = await checkSlitherVersion(isDev);
+    if(!slitherVersion) process.exit(1)
+
+    console.log(
+        chalk.greenBright(`
+        Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
+        under the Plugin section paste the following declaration:\n
+        {
+            "title": "slither anaylsis",
+            "url": "http://<machine_ip>:${port}"
+        }\n
+        Then start the plugin by licking on its icon.
+        `)
+    )
 });
 
 export default app;

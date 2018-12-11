@@ -1,6 +1,10 @@
 module.exports = {
     port: 8000,
-    slitherVersion: "0.0.5",
+    slitherVersion: {
+        majorVersion: 0,
+        minorVersion: 3,
+        patch: 1
+    },
     bodyLimit: "100kb",
     corsHeaders: [],
     detectors: [
@@ -24,25 +28,4 @@ module.exports = {
         "solc-version",
         "unused-state"
     ],
-    impact: {
-        "suicidal": "high",
-        "uninitialized-state": "high",
-        "uninitialized-storage": "high",
-        "arbitrary-send": "high",
-        "controlled-delegatecall": "high",
-        "reentrancy": "high",
-        "locked-ether": "high",
-        "constant-function": "high",
-        "tx-origin": "medium",
-        "uninitialized-local": "medium",
-        "unused-return": "medium",
-        "assembly": "informational",
-        "constable-states": "informational",
-        "external-function": "informational",
-        "low-level-calls": "informational",
-        "naming-convention": "informational",
-        "pragma": "informational",
-        "solc-version": "informational",
-        "unused-state": "informational"
-    }
 }
