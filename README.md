@@ -35,7 +35,7 @@ Options:
 ```
 
 ```sh
-$ slitherd -p 8080
+$ slitherd
 
     Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
     under the Plugin section paste the following declaration:
@@ -48,6 +48,23 @@ $ slitherd -p 8080
     Then start the plugin by licking on its icon.
 ```
 
+You change the port by passing the `-p <port>` flag
+
+```sh
+$ slitherd -p 9000
+
+    Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
+    under the Plugin section paste the following declaration:
+
+    {
+        "title": "slither anaylsis",
+        "url": "http://127.0.0.1:9000"
+    }
+
+    Then start the plugin by licking on its icon.
+```
+
+
 You can run the remix slither plugin in dev mode to make it ignore
 the slither version
 
@@ -55,7 +72,7 @@ the slither version
 $ slitherd -d
     
     Running in dev mode
-    
+
     Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
     under the Plugin section paste the following declaration:
 

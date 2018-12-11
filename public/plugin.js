@@ -58,15 +58,15 @@ function goToLine(error){
 function displayError(error){
 
   const order = {
-    "informational": 0,
-    "medium": 1,
-    "high": 2,
+    "Informational": 0,
+    "Medium": 1,
+    "High": 2,
   }
 
   const color = {
-    "high":          "alert-danger",
-    "medium":        "alert-warning",
-    "informational": "alert-info"
+    "High":          "alert-danger",
+    "Medium":        "alert-warning",
+    "Informational": "alert-info"
   }
 
   error = error.sort(function(x, y){
