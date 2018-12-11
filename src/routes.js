@@ -22,7 +22,7 @@ const analyzeRouter = async function(req, res, next){
     }
 
     let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
-    
+
     if(enableDetectors){
         cmd = `${cmd} --detect ${enableDetectors}`
     }
@@ -55,7 +55,7 @@ const analyzeRouter = async function(req, res, next){
     } finally {
         // delete file
         await fs.unlinkSync(filePath)
-        // await fs.unlinkSync(outputFile)
+        await fs.unlinkSync(outputFile)
     }
 }
 
