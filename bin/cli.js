@@ -33,3 +33,5 @@ app.server.listen(process.env.PORT || port, async () => {
         `)
     )
 });
+
+module.exports = app

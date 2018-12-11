@@ -48,6 +48,27 @@ $ slitherd -p 8080
     Then start the plugin by licking on its icon.
 ```
 
+You can run the remix slither plugin in dev mode to make it ignore
+the slither version
+
+```sh
+$ slitherd -d
+    
+    Running in dev mode
+    
+    Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
+    under the Plugin section paste the following declaration:
+
+    {
+        "title": "slither anaylsis",
+        "url": "http://127.0.0.1:8000"
+    }
+
+    Then start the plugin by licking on its icon.
+```
+
+
+
 License
 -------
 MIT
