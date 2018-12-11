@@ -10,11 +10,13 @@
 ```console
 $ pip install slither-analyzer
 ```
+
 #### Upgrade Sliter
 
 ```console
 $ pip install slither-analyzer --upgrade
 ```
+
 ### Install Remix plugin
 
 ```console
@@ -83,7 +85,6 @@ $ slitherd -d
 
     Then start the plugin by licking on its icon.
 ```
-
 
 
 License

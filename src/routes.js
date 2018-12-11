@@ -5,15 +5,12 @@ import { isValid, exec, errorMessage } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
-    console.log({target})
 
     const contract = sources[target].content;
     const fileName = target.split('/').pop();
     const fileDir = `${path.dirname(target)}`;
     shell.mkdir('-p', fileDir);
-    console.log({fileDir})
     const filePath = fileDir + '/'+fileName;
-    console.log({filePath})
     const outputFile = `${path.dirname(target)}/output.json`
 
     let response = {
@@ -27,8 +24,12 @@ const analyzeRouter = async function(req, res, next){
         cmd = `${cmd} --detect ${enableDetectors}`
     }
 
+    // exlude naming-convention for now
+    // no description field
     if(disableDetectors){
-        cmd = `${cmd} --exclude ${disableDetectors}`
+        cmd = `${cmd} --exclude naming-convention,${disableDetectors}`
+    } else {
+        cmd = `${cmd} --exclude naming-convention`
     }
 
     try {
@@ -44,10 +45,9 @@ const analyzeRouter = async function(req, res, next){
         return res.status(200).json(response)
 
     } catch(error) {
-        console.log(error)
-        
+                
         let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
-        console.log(fs.readFileSync(outputFile, 'utf8'))
+        // console.log(fs.readFileSync(outputFile, 'utf8'))
         response.error = data
 
         return res.status(500).json(response)

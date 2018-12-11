@@ -1,5 +1,6 @@
 
 const extension = new window.RemixExtension()
+
 let compileMsg = function(type, filename){
   switch(type){
     case 1:
@@ -9,16 +10,13 @@ let compileMsg = function(type, filename){
     default:
       return ""
   }
-  
-}
-let global_err = []
-let line = function(){
-  console.log('sdagsas')
 }
 
+let line = function(){}
+
 async function post(url, data, cb) {
-  console.log(`host ${window.location.origin}`)
   const serverUrl  = `${window.location.origin}` + url
+
   try{
     const response =  await (await fetch(serverUrl, { method: 'POST', headers: { "Content-Type": "application/json; charset=utf-8"}, body: JSON.stringify(data)})).json();
     cb(response);
@@ -43,7 +41,6 @@ function handleCompileFailure(error) {
 function goToLine(error){
   console.log({error})
   return function(index){
-    console.log("working ofr Gord")
     index = parseInt(index)
     const item = error[index]
     const func = item['function'];

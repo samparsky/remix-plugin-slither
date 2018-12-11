@@ -3,7 +3,7 @@ module.exports = {
     slitherVersion: {
         majorVersion: 0,
         minorVersion: 3,
-        patch: 2
+        patch: 1
     },
     bodyLimit: "100kb",
     corsHeaders: []
