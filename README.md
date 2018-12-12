@@ -23,8 +23,8 @@ Source
 
 ```bash
 $ git clone https://github.com/samparsky/remix-plugin-slither.git
-$ npm install
-$ npm start 
+$ npm install && npm link
+$ npm start
 ```
 
 NPM
