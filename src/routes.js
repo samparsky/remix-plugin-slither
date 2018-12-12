@@ -7,6 +7,11 @@ const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
 
     let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
+    
+    let response = {
+        "output": null,
+        "error": null
+    }
 
     if(enableDetectors){
         const result = validateDetectors(enableDetectors)
@@ -32,11 +37,6 @@ const analyzeRouter = async function(req, res, next){
     shell.mkdir('-p', fileDir);
     const filePath = fileDir + '/'+fileName;
     const outputFile = `${path.dirname(target)}/output.json`
-
-    let response = {
-        "output": null,
-        "error": null
-    }
 
     try {
 
