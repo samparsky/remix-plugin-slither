@@ -23,7 +23,7 @@ const analyzeRouter = async function(req, res, next){
     if(enableDetectors){
         const result = validateDetectors(enableDetectors)
         if(!result){
-            response.error = "Invalid detector"
+            response.error = `Invalid detector present - ${enableDetectors}`
             return res.status(500).json(response)
         }
         cmd = `${cmd} --detect ${enableDetectors}`
@@ -32,7 +32,7 @@ const analyzeRouter = async function(req, res, next){
     if(disableDetectors){
         const result = validateDetectors(disableDetectors)
         if(!result){
-            response.error = "Invalid detector"
+            response.error = `Invalid detector - ${disableDetectors}`
             return res.status(500).json(response)
         }
         cmd = `${cmd} --exclude ${disableDetectors}`
@@ -41,32 +41,23 @@ const analyzeRouter = async function(req, res, next){
     try {
 
         fs.writeFileSync(filePath, contract);
-        // execute command
-        let {stdout, stderr} = await exec(cmd)
-
-        // parse json file and return response
-        const data = fs.readFileSync(outputFile)
-        console.log('invsgdgaasdgsg tyring')
-
-        if(isValid(stdout)) response["output"] = stdout
-        if(isValid(stderr)) response["error"] = data
-        
-        return res.status(200).json(response)
+        // execute slither command
+        let {stderr} = await exec(cmd)
+        response["output"] = stderr
 
     } catch(error) {
-        console.log(error)
 
         let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
-        // console.log(fs.readFileSync(outputFile, 'utf8'))
         response.error = data
-
-        return res.status(500).json(response)
 
     } finally {
         // delete file
         await fs.unlinkSync(filePath)
         await fs.unlinkSync(outputFile)
     }
+
+    return res.status(200).json(response)
+
 }
 
 export {

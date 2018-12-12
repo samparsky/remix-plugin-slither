@@ -63,14 +63,18 @@ const checkSlitherVersion = async (isDev) => {
 }
 
 const validateDetectors = (detector) => {
-    const result = detector.split(",").forEach((value) => {
+    let result = detector.split(",")
+
+    if(result.length == 1){
+        let position = detectors.indexOf(result[0])
+        return position != -1
+    }
+
+    result = result.forEach((value) => {
         return detectors.indexOf(value)
     })
-    const position = result.indexOf(-1)
-    if(position == -1){
-        return true
-    }
-    return false
+    let position = result.indexOf(-1)
+    return position != -1
 }
 
 export { exec, isValid, checkSlitherVersion, validateDetectors }

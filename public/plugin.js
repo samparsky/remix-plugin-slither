@@ -1,7 +1,18 @@
 
 const extension = new window.RemixExtension()
 
-let compileMsg = function(type, filename){
+let line = function(){}
+
+const disableInput = (id) => $(id).attr("disabled", true)
+const enableInput = (id) => $(id).attr("disabled", false)
+const getValue = (id) => $(id).val()
+
+function params(id){
+  disableInput(id);
+  return getValue(id);
+}
+
+const compileMsg = function(type, filename){
   switch(type){
     case 1:
       return `<p class=\"text-center\" >
@@ -17,11 +28,10 @@ let compileMsg = function(type, filename){
   }
 }
 
-let line = function(){}
 
 async function post(url, data, cb) {
   const serverUrl  = `${window.location.origin}` + url
-  try{
+  try {
     const response =  await ( await fetch( 
                     serverUrl, { 
                       method: 'POST', 
@@ -31,8 +41,7 @@ async function post(url, data, cb) {
                   )
                 ).json();
     cb(response);
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
   } 
 }
@@ -52,6 +61,8 @@ function handleCompileFailure(error) {
 function goToLine(error){
 
   return function(index){
+    event.preventDefault();
+
     index = parseInt(index)
     const func = error[index]['function'];
 
@@ -68,7 +79,7 @@ function goToLine(error){
     extension.call(
       'editor', 
       'highlight', 
-      [position, func['source_mapping']['filename'], "#f60"], 
+      [position, func['source_mapping']['filename'], "hsla(202, 91%, 75%, 1)"], 
       function(err, result){
         
       }
@@ -91,10 +102,10 @@ function formatError(error){
     "Informational": "alert-info"
   }
 
-  error = error.sort(function(x, y){
+  error = error.sort( function(x, y) {
     if(order[x.impact] < order[y.impact]){
       return -1
-    } else if (order[x.impact] > order[y.impact]){
+    } else if (order[x.impact] > order[y.impact]) {
       return 1
     }
     return 0
@@ -131,10 +142,9 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
   const { source, data} = result[0]
 
   post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
-
     let result
     
-    if(res['error']){
+    if(!res['output']) {
       if(typeof res['error'] == "string") {
         result = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>${res['error']}</strong>
@@ -152,8 +162,8 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
       }
 
     } else {
-      result = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong>No Issues</strong>
+      result = `<div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>Success! No issues found</strong>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -165,39 +175,32 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
 
 }
 
-const disableInput = (id) => $(id).attr("disabled", true)
-const enableInput = (id) => $(id).attr("disabled", false)
-const getValue = (id) => $(id).val()
-
-function params(id){
-  disableInput(id);
-  return getValue(id);
-}
-
 window.onload = function () {
 
   document.querySelector('button#analyze').addEventListener('click', function () {
+    
     disableInput("#analyze")
     $('#collapseExample').collapse('hide');
+
     let div = document.querySelector('div#results');
     div.innerHTML = compileMsg(1);
+
     extension.call('compiler', 'getCompilationResult', [], function (error, result ) {
-        if(result) {
+      if(result[0]) {
+        const filename = result[0]['source']['target'];
+        let disableDetectors = params('#disable-detectors')
+        let enableDetectors = params('#enable-detectors')
 
-          const filename = result[0]['source']['target'];
-          let disableDetectors = params('#disable-detectors')
-          let enableDetectors = params('#enable-detectors')
+        div.innerHTML = compileMsg(2, filename);
 
-          div.innerHTML = compileMsg(2, filename);
+        handleCompileSuccess(disableDetectors, enableDetectors, result);
+      } else {
+        handleCompileFailure(error);
+      }
 
-          handleCompileSuccess(disableDetectors, enableDetectors, result);
-        } else{
-          handleCompileFailure(error);
-        }
-
-        enableInput("#analyze")
-        enableInput('#enable-detectors')
-        enableInput('#disable-detectors')
+      enableInput("#analyze")
+      enableInput('#enable-detectors')
+      enableInput('#disable-detectors')
     });
   });
 

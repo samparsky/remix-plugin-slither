@@ -19,7 +19,7 @@ $ pip install slither-analyzer --upgrade
 
 ### Install Remix plugin
 
-From Source
+Source
 
 ```bash
 $ git clone https://github.com/samparsky/remix-plugin-slither.git
@@ -27,8 +27,9 @@ $ npm install
 $ npm start
 ```
 
+NPM
 ```console
-$ npm install -g remix-slither
+$ npm install -g remix-slither-plugin
 ```
 
 ### Start
@@ -51,7 +52,7 @@ $ slitherd
     under the Plugin section paste the following declaration:
 
     {
-        "title": "slither anaylsis",
+        "title": "slitherd",
         "url": "http://127.0.0.1:8000"
     }
 
@@ -67,7 +68,7 @@ $ slitherd -p 9000
     under the Plugin section paste the following declaration:
 
     {
-        "title": "slither anaylsis",
+        "title": "slitherd",
         "url": "http://127.0.0.1:9000"
     }
 
@@ -87,7 +88,7 @@ $ slitherd -d
     under the Plugin section paste the following declaration:
 
     {
-        "title": "slither anaylsis",
+        "title": "slitherd",
         "url": "http://127.0.0.1:8000"
     }
 
