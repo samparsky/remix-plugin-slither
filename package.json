@@ -1,7 +1,11 @@
 {
     "name": "remix-slither-plugin",
-    "version": "0.0.5",
+    "version": "0.0.7",
     "description": "Sliter plugin for Remix",
+    "author": {
+        "name": "Omidiora Samuel",
+        "email": "samparsky@gmail.com"
+    },
     "main": "dist",
     "scripts": {
         "dev": "nodemon -w src --exec \"npm run build && babel-node bin/cli.js \"",

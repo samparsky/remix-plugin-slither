@@ -6,20 +6,6 @@ import { isValid, exec, validateDetectors } from "./helper"
 const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
 
-    const contract = sources[target].content;
-    const fileName = target.split('/').pop();
-    const fileDir = `${path.dirname(target)}`;
-    shell.mkdir('-p', fileDir);
-    const filePath = fileDir + '/'+fileName;
-    const outputFile = `${path.dirname(target)}/output.json`
-
-    let response = {
-        "output": null,
-        "error": null
-    }
-
-    let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
-
     if(enableDetectors){
         const result = validateDetectors(enableDetectors)
         if(!result){
@@ -37,6 +23,21 @@ const analyzeRouter = async function(req, res, next){
         }
         cmd = `${cmd} --exclude ${disableDetectors}`
     }
+
+    const contract = sources[target].content;
+    const fileName = target.split('/').pop();
+    const fileDir = `${path.dirname(target)}`;
+    shell.mkdir('-p', fileDir);
+    const filePath = fileDir + '/'+fileName;
+    const outputFile = `${path.dirname(target)}/output.json`
+
+    let response = {
+        "output": null,
+        "error": null
+    }
+
+    let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
+
 
     try {
 
