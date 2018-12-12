@@ -70,7 +70,6 @@ function goToLine(error){
     // naming convention doesn't have
     // function key
     if(error[index]['check'] == "naming-convention"){
-      console.log(error[index])
       func = error[index]['name'];
     } else {
       func = error[index]['function']
