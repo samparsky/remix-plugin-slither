@@ -64,7 +64,17 @@ function goToLine(error){
     event.preventDefault();
 
     index = parseInt(index)
-    const func = error[index]['function'];
+    
+    let func
+
+    // naming convention doesn't have
+    // function key
+    if(error[index]['check'] == "naming-convention"){
+      console.log(error[index])
+      func = error[index]['name'];
+    } else {
+      func = error[index]['function']
+    }
 
     const position = JSON.stringify(
       { "start": {
@@ -143,7 +153,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
 
   post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
     let result
-    
+
     if(!res['output']) {
       if(typeof res['error'] == "string") {
         result = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
