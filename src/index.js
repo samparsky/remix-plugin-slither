@@ -18,7 +18,7 @@ app.use(express.urlencoded({
     limit: '50mb'
 }));
 app.use(express.json({limit: '50mb'}));
-app.use(express.static("public"))
+app.use(express.static("../public"))
 
 app.use(function(err, req, res, next) {
     res.status(err.status || 500).json({ error: err.message});  
