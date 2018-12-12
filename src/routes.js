@@ -6,6 +6,8 @@ import { isValid, exec, validateDetectors } from "./helper"
 const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
 
+    let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
+
     if(enableDetectors){
         const result = validateDetectors(enableDetectors)
         if(!result){
@@ -35,9 +37,6 @@ const analyzeRouter = async function(req, res, next){
         "output": null,
         "error": null
     }
-
-    let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
-
 
     try {
 
