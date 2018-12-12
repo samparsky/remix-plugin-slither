@@ -95,7 +95,6 @@ $ slitherd -d
     Then start the plugin by licking on its icon.
 ```
 
-
 License
 -------
 MIT

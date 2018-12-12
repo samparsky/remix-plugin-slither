@@ -34,5 +34,14 @@
     "bin": {
         "slitherd": "./bin/cli.js"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "keywords": [
+        "remix",
+        "slither",
+        "solidity",
+        "static analysis",
+        "smart contract audit",
+        "remix ide",
+        "trailofbits"
+    ]
 }
