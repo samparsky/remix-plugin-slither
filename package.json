@@ -33,5 +33,6 @@
     },
     "bin": {
         "slitherd": "./bin/cli.js"
-    }
+    },
+    "license": "MIT"
 }

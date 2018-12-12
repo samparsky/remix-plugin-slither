@@ -1,5 +1,5 @@
 import { isEmpty, isNull, isUndefined } from "underscore"
-import {slitherVersion} from "./config"
+import {slitherVersion, detectors} from "./config"
 import chalk from "chalk"
 import util from "util"
 
@@ -9,9 +9,17 @@ const exec = util.promisify(require("child_process").exec)
 const isValid = (obj) => !isEmpty(obj) && !isUndefined(obj) && !isNull(obj)
 
 const compareSlitherVersion = (majorVesion, minorVersion, patch ) => (
-                                            majorVesion >= slitherVersion.majorVersion && 
-                                            minorVersion >= slitherVersion.minorVersion && 
-                                            patch >= slitherVersion.patch
+                                            (majorVesion > slitherVersion.majorVersion)
+                                            ||
+                                            (majorVesion == slitherVersion.majorVersion &&
+                                                minorVersion > slitherVersion.minorVersion
+                                            ) 
+                                            || 
+                                            (
+                                                majorVesion == slitherVersion.majorVersion &&
+                                                minorVersion == slitherVersion.minorVersion &&
+                                                patch >= slitherVersion.patch
+                                            )
 )
 
 
@@ -53,4 +61,16 @@ const checkSlitherVersion = async (isDev) => {
     }
     return true
 }
-export { exec, isValid, checkSlitherVersion }
+
+const validateDetectors = (detector) => {
+    const result = detector.split(",").forEach((value) => {
+        return detectors.indexOf(value)
+    })
+    const position = result.indexOf(-1)
+    if(position == -1){
+        return true
+    }
+    return false
+}
+
+export { exec, isValid, checkSlitherVersion, validateDetectors }

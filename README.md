@@ -19,6 +19,14 @@ $ pip install slither-analyzer --upgrade
 
 ### Install Remix plugin
 
+From Source
+
+```bash
+$ git clone https://github.com/samparsky/remix-plugin-slither.git
+$ npm install
+$ npm start
+```
+
 ```console
 $ npm install -g remix-slither
 ```
