@@ -6,6 +6,8 @@ import util from "util"
 const exec = util.promisify(require("child_process").exec)
 
 const isValid = (obj) => !isEmpty(obj) && !isUndefined(obj) && !isNull(obj)
+const logInfo = message => console.log(chalk.greenBright(message))
+const logError = message => console.log(chalk.redBright(message))
 
 const compareSlitherVersion = (majorVesion, minorVersion, patch ) => (
                                             (majorVesion > slitherVersion.majorVersion)
@@ -58,9 +60,6 @@ const checkSlitherVersion = async (isDev) => {
     }
     return true
 }
-
-const logInfo = message => console.log(chalk.greenBright(message))
-const logError = message => console.log(chalk.redBright(message))
 
 const validateDetectors = (detector) => {
     let result = detector.split(",")
