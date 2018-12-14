@@ -186,6 +186,16 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
 
 window.onload = function () {
 
+  extension.listen('compiler', 'compilationFinished', function () {
+    extension.call(
+      'editor', 
+      'discardHighlight', 
+      [],
+      function(err){
+      }
+    )
+  })
+
   document.querySelector('button#analyze').addEventListener('click', function () {
     
     disableInput("#analyze")

@@ -3,7 +3,6 @@ import {slitherVersion, detectors} from "./config"
 import chalk from "chalk"
 import util from "util"
 
-
 const exec = util.promisify(require("child_process").exec)
 
 const isValid = (obj) => !isEmpty(obj) && !isUndefined(obj) && !isNull(obj)
@@ -25,9 +24,7 @@ const compareSlitherVersion = (majorVesion, minorVersion, patch ) => (
 
 const checkSlitherVersion = async (isDev) => {
     if(isDev) {
-        console.log(
-            chalk.greenBright("\n\tRunning in dev mode")
-        )
+        logInfo("\n\tRunning in dev mode")
         return true
     }
 
@@ -40,27 +37,30 @@ const checkSlitherVersion = async (isDev) => {
                         )
         let checkVersion = compareSlitherVersion(...version)
         if(!checkVersion){
-            console.log(
-                chalk.redBright(`
+            logError(
+                `
                     Slither Version required >= ${slitherVersion.majorVersion}.${slitherVersion.minorVersion}.${slitherVersion.patch}\n
                     Version Present: ${version.join(".")} \n
                     Please upgrade your slither "pip install slither-analyzer --upgrade"
                 `
-                )
             )
             return false
         }
     } catch(e){
-        console.log(
-            chalk.redBright(`
+        logError(
+            `
                 Slither Installation Required
                 Please install slither ${chalk.greenBright("pip install slither-analyzer")}
-            `)
+            `
         )
+        
         return false
     }
     return true
 }
+
+const logInfo = message => console.log(chalk.greenBright(message))
+const logError = message => console.log(chalk.redBright(message))
 
 const validateDetectors = (detector) => {
     let result = detector.split(",")
@@ -77,4 +77,4 @@ const validateDetectors = (detector) => {
     return position != -1
 }
 
-export { exec, isValid, checkSlitherVersion, validateDetectors }
+export { exec, isValid, checkSlitherVersion, validateDetectors, logInfo, logError }

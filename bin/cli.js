@@ -4,7 +4,7 @@ let program = require('commander');
 const chalk = require('chalk')
 const app = require('../dist/index.js')
 const config = require("../dist/config")
-const { checkSlitherVersion } = require('../dist/helper.js')
+const { checkSlitherVersion, logInfo } = require('../dist/helper.js')
 
 program
     .name("slitherd")
@@ -22,8 +22,8 @@ app.server.listen(process.env.PORT || port, async () => {
     const slitherVersion = await checkSlitherVersion(devMode);
     if(!slitherVersion) process.exit(1)
 
-    console.log(
-        chalk.greenBright(`
+    logInfo(
+        `
         Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
         under the Plugin section paste the following declaration:\n
         {
@@ -31,7 +31,7 @@ app.server.listen(process.env.PORT || port, async () => {
             "url": "http://<machine_ip>:${port}"
         }\n
         Then start the plugin by licking on its icon.
-        `)
+        `
     )
 });
 
