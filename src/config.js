@@ -1,6 +1,6 @@
 module.exports = {
     port: 8000,
-    version: "0.0.8",
+    version: "0.0.9",
     slitherVersion: {
         majorVersion: 0,
         minorVersion: 3,
