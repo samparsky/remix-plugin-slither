@@ -1,7 +1,7 @@
 import shell from "shelljs"
 import fs from "fs"
 import path from "path"
-import { isValid, exec, validateDetectors } from "./helper"
+import { exec, validateDetectors } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
@@ -47,7 +47,7 @@ const analyzeRouter = async function(req, res, next){
         response["output"] = stderr
 
     } catch(error) {
-        
+
         let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
         unlinkOutput = true
         response.error = data
