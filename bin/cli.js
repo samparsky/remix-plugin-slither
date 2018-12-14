@@ -3,11 +3,12 @@
 let program = require('commander');
 const chalk = require('chalk')
 const app = require('../dist/index.js')
+const config = require("../dist/config")
 const { checkSlitherVersion } = require('../dist/helper.js')
 
 program
     .name("slitherd")
-    .version("0.1.0")
+    .version(config.version)
     .option('-p, --port <port>', 'Server port', parseInt)
     .option('-d, --dev', 'Development mode')
     .parse(process.argv);
