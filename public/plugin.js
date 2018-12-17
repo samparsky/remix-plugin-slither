@@ -74,7 +74,6 @@ function goToLine(func){
       'highlight', 
       [position, func['source_mapping']['filename'], "hsla(202, 91%, 75%, 1)"], 
       function(err, result){
-        
       }
     )
 
@@ -84,8 +83,9 @@ function goToLine(func){
 function sortError(error){
   const order = {
     "Informational": 0,
-    "Medium": 1,
-    "High": 2,
+    "Low": 1,
+    "Medium": 2,
+    "High": 3,
   }
 
   return error.sort(function(x, y) {
@@ -100,7 +100,7 @@ function sortError(error){
 
 function getMessage(errorClass, funcParam, desc){
   function template(strings, errorClass, funcParam, desc){
-    let str0 = strings[0]; // "That "
+    let str0 = strings[0];
     let str1 = strings[1]; 
     let str2 = strings[2];
     let str3 = strings[3];
@@ -123,14 +123,15 @@ function formatError(error){
   const color = {
     "High":          "alert-danger",
     "Medium":        "alert-warning",
-    "Informational": "alert-info"
+    "Informational": "alert-success",
+    "Low":           "alert-info",
   }
 
   const sortedError = sortError(error)
 
   const html = sortedError.map((err, index) => {
     const item      = sortedError[index]
-    const errColor  = color[err.impact]
+    const errColor  = color[err['impact']]
     let description = err['description']
 
     if(item['check'] == "unused-state"){
