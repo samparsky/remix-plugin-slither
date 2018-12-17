@@ -23,6 +23,11 @@ const compileMsg = function(type, filename){
               <i class=\"fa fa-spinner fa-spin\"></i> 
               Analyzing <strong>${filename}</strong> ...
               </p>`
+    case 3:
+      return `<p class=\"text-center text-danger\" >
+      <i class=\"fa fa-alert\"></i> 
+      Failed to connect to server ...
+      </p>`
     default:
       return ""
   }
@@ -42,6 +47,8 @@ async function post(url, data, cb) {
                 ).json();
     cb(response);
   } catch (error) {
+    let div = document.querySelector('div#results');
+    div.innerHTML = compileMsg(3);
     console.log(error);
   } 
 }
