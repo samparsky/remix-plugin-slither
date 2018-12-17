@@ -56,8 +56,8 @@ const analyzeRouter = async function(req, res, next){
         }
     } finally {
         // delete file
-        await fs.unlinkSync(filePath)
-        if(unlinkOutput) await fs.unlinkSync(outputFile)
+        fs.unlinkSync(filePath)
+        if(unlinkOutput) fs.unlinkSync(outputFile)
     }
 
     return res.status(200).json(response)
