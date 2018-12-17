@@ -1,6 +1,6 @@
 module.exports = {
     port: 8000,
-    version: "0.0.10",
+    version: "0.0.11",
     slitherVersion: {
         majorVersion: 0,
         minorVersion: 4,
@@ -30,6 +30,6 @@ module.exports = {
         "unused-state",
         "unused-return",
         "shadowing-state",
-        
+
     ],
 }

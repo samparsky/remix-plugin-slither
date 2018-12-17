@@ -1,7 +1,7 @@
 # Remix IDE Slither Plugin
 
 ### Requirements
-* Slither > 0.3.1
+* Slither >= 0.4.0
 
 ### Install 
 
