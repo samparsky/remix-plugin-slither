@@ -47,15 +47,17 @@ const analyzeRouter = async function(req, res, next){
         response["output"] = stderr
 
     } catch(error) {
-
-        let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
-        unlinkOutput = true
-        response.error = data
-
+        if(fs.existsSync(outputFile)){
+            let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
+            unlinkOutput = true
+            response.error = data
+        } else {
+            response.error = error['message'] || "An error occured"
+        }
     } finally {
         // delete file
         await fs.unlinkSync(filePath)
-        if(unlinkOutput) await fs.unlinkSync(outputFile)
+        // if(unlinkOutput) await fs.unlinkSync(outputFile)
     }
 
     return res.status(200).json(response)

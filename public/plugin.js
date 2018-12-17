@@ -58,23 +58,7 @@ function handleCompileFailure(error) {
 }
 
 
-function goToLine(error){
-
-  return function(index){
-    event.preventDefault();
-
-    index = parseInt(index)
-    
-    let func
-
-    // naming convention doesn't have
-    // function key
-    if(error[index]['check'] == "naming-convention"){
-      func = error[index]['name'];
-    } else {
-      func = error[index]['function']
-    }
-
+function goToLine(func){
     const position = JSON.stringify(
       { "start": {
         "line": 
@@ -94,24 +78,17 @@ function goToLine(error){
       }
     )
 
-  }
+    return false;
 }
 
-function formatError(error){
-
+function sortError(error){
   const order = {
     "Informational": 0,
     "Medium": 1,
     "High": 2,
   }
 
-  const color = {
-    "High":          "alert-danger",
-    "Medium":        "alert-warning",
-    "Informational": "alert-info"
-  }
-
-  error = error.sort( function(x, y) {
+  return error.sort(function(x, y) {
     if(order[x.impact] < order[y.impact]){
       return -1
     } else if (order[x.impact] > order[y.impact]) {
@@ -119,18 +96,63 @@ function formatError(error){
     }
     return 0
   })
+}
 
-  line = goToLine(error)
+function getMessage(errorClass, funcParam, desc){
+  function template(strings, errorClass, funcParam, desc){
+    let str0 = strings[0]; // "That "
+    let str1 = strings[1]; 
+    let str2 = strings[2];
+    let str3 = strings[3];
 
-  const html = error.map((err, index)=>(
-    `<div class="alert ${color[err.impact]} onclick="line(${index})"
-      alert-dismissible fade show" style="text-align: left!important" role="alert">
-    <a href="#" onclick="line(${index})" style="font-size: 12px">${err.description}</a>
-    <button  type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    return `${str0}${errorClass}${str1}${funcParam}${str2}${desc}${str3}`
+  }
+
+  return template`
+  <div class="alert ${errorClass} alert-dismissible fade show" 
+    style="text-align: left!important" role="alert">
+  <a href="#" onclick='return goToLine(${JSON.stringify(funcParam)})' style="font-size: 12px">${desc}</a>
+  <button  type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
   </div>`
-  ))
+}
+
+
+function formatError(error){
+  const color = {
+    "High":          "alert-danger",
+    "Medium":        "alert-warning",
+    "Informational": "alert-info"
+  }
+
+  const sortedError = sortError(error)
+
+  const html = sortedError.map((err, index) => {
+    const item      = sortedError[index]
+    const errColor  = color[err.impact]
+    let description = err['description']
+
+    if(item['check'] == "unused-state"){
+      let elements = item['elements']   
+      let descriptions = description.split("\n ")
+
+      if(descriptions.length == 1) {
+        let func = elements[0]
+        description = getMessage(errColor, func, description)
+      } else {
+        descriptions = descriptions.map((desc, index) => {
+          let func = elements[index]
+          return getMessage(errColor, func, desc)
+        })
+        description = descriptions.reduce((total, item) => `${total} ${item}`)
+      }
+    } else {
+      let func = item['elements'][0]
+      description = getMessage(errColor, func, description)
+    }
+    return description
+  })
 
   return html.reduce((total, item) => `${total} ${item}`)
 }
@@ -148,7 +170,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
     return
   }
 
-  const { source, data} = result[0]
+  const { source, data } = result[0]
 
   post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
     let result

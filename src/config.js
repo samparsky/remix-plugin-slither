@@ -3,8 +3,8 @@ module.exports = {
     version: "0.0.10",
     slitherVersion: {
         majorVersion: 0,
-        minorVersion: 3,
-        patch: 1
+        minorVersion: 4,
+        patch: 0
     },
     bodyLimit: "100kb",
     corsHeaders: [],
@@ -27,6 +27,9 @@ module.exports = {
         "naming-convention",
         "pragma",
         "solc-version",
-        "unused-state"
+        "unused-state",
+        "unused-return",
+        "shadowing-state",
+        
     ],
 }
