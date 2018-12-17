@@ -61,19 +61,4 @@ const checkSlitherVersion = async (isDev) => {
     return true
 }
 
-const validateDetectors = (detector) => {
-    let result = detector.split(",")
-
-    if(result.length == 1){
-        let position = detectors.indexOf(result[0])
-        return position != -1
-    }
-
-    result = result.forEach((value) => {
-        return detectors.indexOf(value)
-    })
-    let position = result.indexOf(-1)
-    return position != -1
-}
-
-export { exec, isValid, checkSlitherVersion, validateDetectors, logInfo, logError }
+export { exec, isValid, checkSlitherVersion, logInfo, logError }

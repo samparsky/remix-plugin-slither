@@ -1,7 +1,7 @@
 import shell from "shelljs"
 import fs from "fs"
 import path from "path"
-import { exec, validateDetectors } from "./helper"
+import { exec } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
@@ -20,20 +20,10 @@ const analyzeRouter = async function(req, res, next){
     }
 
     if(enableDetectors){
-        const result = validateDetectors(enableDetectors)
-        if(!result){
-            response.error = `Invalid detector present - ${enableDetectors}`
-            return res.status(500).json(response)
-        }
         cmd = `${cmd} --detect ${enableDetectors}`
     }
 
     if(disableDetectors){
-        const result = validateDetectors(disableDetectors)
-        if(!result){
-            response.error = `Invalid detector - ${disableDetectors}`
-            return res.status(500).json(response)
-        }
         cmd = `${cmd} --exclude ${disableDetectors}`
     }
 
