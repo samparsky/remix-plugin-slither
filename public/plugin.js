@@ -138,11 +138,11 @@ function formatError(error){
     let description = err['description']
 
     if(item['check'] == "unused-state"){
-      let elements = item['elements']   
+      let elements     = item['elements']   
       let descriptions = description.split("\n ")
 
       if(descriptions.length == 1) {
-        let func = elements[0]
+        let func    = elements[0]
         description = getMessage(errColor, func, description)
       } else {
         descriptions = descriptions.map((desc, index) => {
@@ -179,7 +179,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
 
   post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
     let result
-    console.log({res})
+
     if(!res['output']) {
       if(typeof res['error'] == "string") {
         result = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -191,7 +191,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
       
       } else {
         result = formatError(res['error'])
-        let heading = document.querySelector('div#heading');
+        let heading       = document.querySelector('div#heading');
         heading.innerHTML = `<h6>Result: ${source['target']}</h6>`
       }
 
@@ -226,16 +226,16 @@ window.onload = function () {
     disableInput("#analyze")
     $('#collapseExample').collapse('hide');
 
-    let div = document.querySelector('div#results');
+    let div       = document.querySelector('div#results');
     div.innerHTML = compileMsg(1);
 
     extension.call('compiler', 'getCompilationResult', [], function (error, result ) {
       if(result[0]) {
-        const filename = result[0]['source']['target'];
+        const filename       = result[0]['source']['target'];
         let disableDetectors = params('#disable-detectors')
-        let enableDetectors = params('#enable-detectors')
+        let enableDetectors  = params('#enable-detectors')
 
-        div.innerHTML = compileMsg(2, filename);
+        div.innerHTML        = compileMsg(2, filename);
 
         handleCompileSuccess(disableDetectors, enableDetectors, result);
       } else {
