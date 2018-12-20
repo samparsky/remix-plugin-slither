@@ -233,7 +233,6 @@ function handleCompileSuccess(detectors, result) {
   }
 
   const { source, data } = result[0]
-  console.log({detectors})
 
   helpers.post(`/analyze`, { detectors, source, data }, function(res) {
     let result
