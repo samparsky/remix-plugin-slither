@@ -12,9 +12,6 @@ const analyzeRouter = async function(req, res, next){
         "sourcePath": target, 
     })
 
-    // const fileName = target.split('/').pop();
-    // const filePath = fileDir + '/'+fileName;
-
     const fileDir    = `${path.dirname(target)}`
     const outputFile = `${fileDir}/output.json`
     const astPath    = `${fileDir}/ast.json`
@@ -39,22 +36,21 @@ const analyzeRouter = async function(req, res, next){
     try {
         shell.mkdir('-p', fileDir)
         fs.writeFileSync(astPath, astContent)
-        
+
         // execute slither command
         let {stderr} = await exec(cmd)
         response["output"] = stderr
 
     } catch(error) {
         if(fs.existsSync(outputFile)){
-            let data = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
-            unlinkOutput = true
+            let data       = JSON.parse(fs.readFileSync(outputFile, 'utf8'))
+            unlinkOutput   = true
             response.error = data
         } else {
             response.error = error['message'] || "An error occured"
         }
     } finally {
         // delete file
-        // fs.unlinkSync(filePath)
         fs.unlinkSync(astPath)
         if(unlinkOutput) fs.unlinkSync(outputFile)
     }
