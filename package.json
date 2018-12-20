@@ -11,7 +11,7 @@
         "dev": "nodemon -w src --exec \"npm run build && babel-node bin/cli.js \"",
         "build": "babel src -s -D -d dist --presets es2015,stage-0",
         "prestart": "npm run -s build",
-        "start": "nodemon --watch src/ --exec babel-node bin/cli.js",
+        "start": "node bin/cli.js",
         "prepublish": "npm run -s build"
     },
     "devDependencies": {

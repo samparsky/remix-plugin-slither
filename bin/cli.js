@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 let program = require('commander');
-const chalk = require('chalk')
 const app = require('../dist/index.js')
 const config = require("../dist/config")
 const { checkSlitherVersion, logInfo } = require('../dist/helper.js')

@@ -7,12 +7,16 @@ const analyzeRouter = async function(req, res, next){
     const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
 
     const contract = sources[target].content;
+    const ast = JSON.stringify(data['sources'][target].legacyAST);
+
     const fileName = target.split('/').pop();
     const fileDir = `${path.dirname(target)}`;
+
     const filePath = fileDir + '/'+fileName;
     const outputFile = `${path.dirname(target)}/output.json`
+    const astPath = `${path.dirname(target)}/${fileName}.ast.json`
 
-    let cmd = `slither ${filePath} --disable-solc-warnings --json ${outputFile}`
+    let cmd = `slither ${filePath} --solc-ast > ${astPath} --disable-solc-warnings --json ${outputFile}`
     
     let response = {
         "output": null,
@@ -32,6 +36,7 @@ const analyzeRouter = async function(req, res, next){
     try {
         shell.mkdir('-p', fileDir);
         fs.writeFileSync(filePath, contract);
+        fs.writeFileSync(astPath, ast)
         // execute slither command
         let {stderr} = await exec(cmd)
         response["output"] = stderr
@@ -47,6 +52,7 @@ const analyzeRouter = async function(req, res, next){
     } finally {
         // delete file
         fs.unlinkSync(filePath)
+        fs.unlinkSync(astPath)
         if(unlinkOutput) fs.unlinkSync(outputFile)
     }
 

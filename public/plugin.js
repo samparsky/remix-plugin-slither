@@ -25,7 +25,7 @@ const compileMsg = function(type, filename){
               </p>`
     case 3:
       return `<p class=\"text-center text-danger\" >
-      <i class=\"fa fa-alert\"></i> 
+      <i class=\"fa fa-warning\"></i> 
       Failed to connect to server ...
       </p>`
     default:
@@ -107,11 +107,7 @@ function sortError(error){
 
 function getMessage(errorClass, funcParam, desc){
   function template(strings, errorClass, funcParam, desc){
-    let str0 = strings[0];
-    let str1 = strings[1]; 
-    let str2 = strings[2];
-    let str3 = strings[3];
-
+    let [ str0, str1, str2, str3 ] = strings;
     return `${str0}${errorClass}${str1}${funcParam}${str2}${desc}${str3}`
   }
 
@@ -159,6 +155,7 @@ function formatError(error){
       let func = item['elements'][0]
       description = getMessage(errColor, func, description)
     }
+
     return description
   })
 
@@ -177,6 +174,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
     document.querySelector('div#results').innerHTML = html;
     return
   }
+  console.log({result})
 
   const { source, data } = result[0]
 
