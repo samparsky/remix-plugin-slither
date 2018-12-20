@@ -47,9 +47,9 @@ async function post(url, data, cb) {
                 ).json();
     cb(response);
   } catch (error) {
+    console.log({error})
     let div = document.querySelector('div#results');
     div.innerHTML = compileMsg(3);
-    console.log(error);
   } 
 }
 
@@ -174,12 +174,12 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
     document.querySelector('div#results').innerHTML = html;
     return
   }
-  
+
   const { source, data } = result[0]
 
   post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
     let result
-
+    console.log({res})
     if(!res['output']) {
       if(typeof res['error'] == "string") {
         result = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -190,11 +190,9 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
           </div>`
       
       } else {
-
         result = formatError(res['error'])
         let heading = document.querySelector('div#heading');
         heading.innerHTML = `<h6>Result: ${source['target']}</h6>`
-
       }
 
     } else {

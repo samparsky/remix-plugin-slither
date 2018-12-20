@@ -4,19 +4,22 @@ import path from "path"
 import { exec } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
-    const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
+    const { disableDetectors, enableDetectors, source: { target }, data } = req.body
 
-    const contract = sources[target].content;
-    const ast = JSON.stringify(data['sources'][target].legacyAST);
+    const ast        = data['sources'][target].legacyAST
+    const astContent = JSON.stringify({
+        ast,
+        "sourcePath": target, 
+    })
 
-    const fileName = target.split('/').pop();
-    const fileDir = `${path.dirname(target)}`;
+    // const fileName = target.split('/').pop();
+    // const filePath = fileDir + '/'+fileName;
 
-    const filePath = fileDir + '/'+fileName;
-    const outputFile = `${path.dirname(target)}/output.json`
-    const astPath = `${path.dirname(target)}/${fileName}.ast.json`
+    const fileDir    = `${path.dirname(target)}`
+    const outputFile = `${fileDir}/output.json`
+    const astPath    = `${fileDir}/ast.json`
 
-    let cmd = `slither ${filePath} --solc-ast > ${astPath} --disable-solc-warnings --json ${outputFile}`
+    let cmd = `slither --solc-ast ${astPath} --disable-solc-warnings --json ${outputFile}`
     
     let response = {
         "output": null,
@@ -34,9 +37,9 @@ const analyzeRouter = async function(req, res, next){
     let unlinkOutput = false
 
     try {
-        shell.mkdir('-p', fileDir);
-        fs.writeFileSync(filePath, contract);
-        fs.writeFileSync(astPath, ast)
+        shell.mkdir('-p', fileDir)
+        fs.writeFileSync(astPath, astContent)
+        
         // execute slither command
         let {stderr} = await exec(cmd)
         response["output"] = stderr
@@ -51,7 +54,7 @@ const analyzeRouter = async function(req, res, next){
         }
     } finally {
         // delete file
-        fs.unlinkSync(filePath)
+        // fs.unlinkSync(filePath)
         fs.unlinkSync(astPath)
         if(unlinkOutput) fs.unlinkSync(outputFile)
     }
