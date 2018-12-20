@@ -81,9 +81,6 @@ const compileMsg = function(type, filename){
   }
 }
 
-
-
-
 function handleCompileFailure(error) {
   html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Compilation Failed!</strong>
