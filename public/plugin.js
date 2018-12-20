@@ -174,8 +174,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
     document.querySelector('div#results').innerHTML = html;
     return
   }
-  console.log({result})
-
+  
   const { source, data } = result[0]
 
   post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
