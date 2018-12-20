@@ -4,8 +4,8 @@ import path from "path"
 import { exec } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
-    const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
-    
+    const { detectors, source: { sources, target }, data } = req.body
+
     const contractContent = sources[target].content
     const ast             = data['sources'][target].legacyAST
     const astContent      = JSON.stringify({
@@ -19,18 +19,10 @@ const analyzeRouter = async function(req, res, next){
     const outputFile   = `${fileDir}/output.json`
     const astPath      = `${fileDir}/ast.json`
 
-    let cmd      = `slither --solc-ast ${astPath} --disable-solc-warnings --json ${outputFile}`
+    let cmd      = `slither --solc-ast ${astPath} --detect ${detectors} --disable-solc-warnings --json ${outputFile}`
     let response = {
         "output": null,
         "error": null
-    }
-
-    if(enableDetectors){
-        cmd = `${cmd} --detect ${enableDetectors}`
-    }
-
-    if(disableDetectors){
-        cmd = `${cmd} --exclude ${disableDetectors}`
     }
 
     let unlinkOutput = false
@@ -63,6 +55,25 @@ const analyzeRouter = async function(req, res, next){
 
 }
 
+
+const listDetectors = async function(req, res, next){
+    let response = {
+        "output": null,
+        "error": null
+    }
+
+    try {
+        const cmd       = `slither --list-detectors-json`
+        let { stdout }  = await exec(cmd)
+        response.output = stdout
+    } catch(e) {
+        response.error = e['message'] || "An error occured"
+    }
+
+    return res.status(200).json(response)
+}
+
 export {
-    analyzeRouter
+    analyzeRouter,
+    listDetectors
 }

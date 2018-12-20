@@ -1,15 +1,63 @@
 
 const extension = new window.RemixExtension()
 
-let line = function(){}
+const helpers = {
+  "disableInput": (id) => $(id).attr("disabled", true),
+  "enableInput": (id) => $(id).attr("disabled", false),
+  "display":  (id, html) => document.querySelector(`${id}`).innerHTML = html,
 
-const disableInput = (id) => $(id).attr("disabled", true)
-const enableInput = (id) => $(id).attr("disabled", false)
-const getValue = (id) => $(id).val()
+  "get": async function (url, cb){
+    const serverUrl  = `${window.location.origin}` + url
+    try {
+      const response =  await ( await fetch( 
+                      serverUrl, { 
+                        method: 'GET', 
+                        headers: { "Content-Type": "application/json; charset=utf-8"},
+                      }
+                    )
+                  ).json();
+      cb(response);
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  "post": async function (url, data, cb) {
+    const serverUrl  = `${window.location.origin}` + url
+    try {
+      const response =  await ( await fetch( 
+                      serverUrl, { 
+                        method: 'POST', 
+                        headers: { "Content-Type": "application/json; charset=utf-8"},
+                        body: JSON.stringify(data)
+                      }
+                    )
+                  ).json();
+      cb(response);
+    } catch (error) {
+      console.log({error})
+      let div = document.querySelector('div#results');
+      div.innerHTML = compileMsg(3);
+    } 
+  },
 
-function params(id){
-  disableInput(id);
-  return getValue(id);
+  "sortError": function (error){
+    const order = {
+      "Informational": 0,
+      "Low": 1,
+      "Medium": 2,
+      "High": 3,
+    }
+  
+    return error.sort(function(x, y) {
+      if(order[x.impact] < order[y.impact]){
+        return -1
+      } else if (order[x.impact] > order[y.impact]) {
+        return 1
+      }
+      return 0
+    })
+  },
+  
 }
 
 const compileMsg = function(type, filename){
@@ -34,24 +82,7 @@ const compileMsg = function(type, filename){
 }
 
 
-async function post(url, data, cb) {
-  const serverUrl  = `${window.location.origin}` + url
-  try {
-    const response =  await ( await fetch( 
-                    serverUrl, { 
-                      method: 'POST', 
-                      headers: { "Content-Type": "application/json; charset=utf-8"},
-                      body: JSON.stringify(data)
-                    }
-                  )
-                ).json();
-    cb(response);
-  } catch (error) {
-    console.log({error})
-    let div = document.querySelector('div#results');
-    div.innerHTML = compileMsg(3);
-  } 
-}
+
 
 function handleCompileFailure(error) {
   html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -64,6 +95,49 @@ function handleCompileFailure(error) {
   document.querySelector('div#results').innerHTML = error || html;
 }
 
+function addCheckbox(item) {
+  const { check, wiki, description } = item
+  const html = `
+    <div class="detectors form-check">
+      <input class="form-check-input" type="checkbox" checked value="${check}" id="${check}">
+      <label class="form-check-label" for="${check}">
+       <a target="_blank" href="${wiki}">${description}</a>
+      </label>
+    </div>
+  `
+  return html
+}
+
+function getDetectors() {
+  let detectors = $(".detectors input:checkbox:checked").map(function(){
+    return `${$(this).val()}`;
+  }).get();
+  detectors = detectors.reduce((total, item) => `${total},${item}`)
+  return detectors
+}
+
+function displayDetectors(detectors) {
+  const highDetectors          = (detectors.filter((item) => item['impact'] == "High"))
+                                  .map(addCheckbox)
+                                  .reduce((total, item) => `${total} ${item}`)
+
+  const mediumDetectors        = (detectors.filter((item) => item['impact'] == "Medium"))
+                                  .map(addCheckbox)
+                                  .reduce((total, item) => `${total} ${item}`)
+
+  const lowDetectors           = (detectors.filter((item) => item['impact'] == "Low"))
+                                  .map(addCheckbox)
+                                  .reduce((total, item) => `${total} ${item}`)
+
+  const informationalDetectors = (detectors.filter((item) => item['impact'] == "Informational"))
+                                  .map(addCheckbox)
+                                  .reduce((total, item) => `${total} ${item}`)
+
+  helpers.display('div#high', highDetectors)
+  helpers.display('div#medium', mediumDetectors)
+  helpers.display('div#low', lowDetectors)
+  helpers.display('div#informational', informationalDetectors)
+}
 
 function goToLine(func){
     const position = JSON.stringify(
@@ -87,23 +161,6 @@ function goToLine(func){
     return false;
 }
 
-function sortError(error){
-  const order = {
-    "Informational": 0,
-    "Low": 1,
-    "Medium": 2,
-    "High": 3,
-  }
-
-  return error.sort(function(x, y) {
-    if(order[x.impact] < order[y.impact]){
-      return -1
-    } else if (order[x.impact] > order[y.impact]) {
-      return 1
-    }
-    return 0
-  })
-}
 
 function getMessage(errorClass, funcParam, desc){
   function template(strings, errorClass, funcParam, desc){
@@ -130,7 +187,7 @@ function formatError(error){
     "Low":           "alert-info",
   }
 
-  const sortedError = sortError(error)
+  const sortedError = helpers.sortError(error)
 
   const html = sortedError.map((err, index) => {
     const item      = sortedError[index]
@@ -162,7 +219,7 @@ function formatError(error){
   return html.reduce((total, item) => `${total} ${item}`)
 }
 
-function handleCompileSuccess(disableDetectors, enableDetectors, result) {
+function handleCompileSuccess(detectors, result) {
   if(result[0] == null){
     html = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Compilation Failed!</strong>
@@ -176,8 +233,9 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
   }
 
   const { source, data } = result[0]
+  console.log({detectors})
 
-  post(`/analyze`, { disableDetectors, enableDetectors, source, data }, function(res) {
+  helpers.post(`/analyze`, { detectors, source, data }, function(res) {
     let result
 
     if(!res['output']) {
@@ -209,7 +267,7 @@ function handleCompileSuccess(disableDetectors, enableDetectors, result) {
 
 }
 
-window.onload = function () {
+window.onload = async function () {
 
   extension.listen('compiler', 'compilationFinished', function () {
     extension.call(
@@ -220,31 +278,35 @@ window.onload = function () {
       }
     )
   })
+  
+  helpers.disableInput("#analyze")
+  // get detectors
+  await helpers.get("/detectors", function(response) {
+    if(response['output']){
+      response = JSON.parse(response['output'])
+      displayDetectors(response)
+    }
+  })
+  helpers.enableInput("#analyze")
 
   document.querySelector('button#analyze').addEventListener('click', function () {
-    
-    disableInput("#analyze")
+    helpers.disableInput("#analyze")
     $('#collapseExample').collapse('hide');
 
+    const detectors = getDetectors()
     let div       = document.querySelector('div#results');
     div.innerHTML = compileMsg(1);
 
-    extension.call('compiler', 'getCompilationResult', [], function (error, result ) {
+    extension.call('compiler', 'getCompilationResult', [], function (error, result ) {      
       if(result[0]) {
         const filename       = result[0]['source']['target'];
-        let disableDetectors = params('#disable-detectors')
-        let enableDetectors  = params('#enable-detectors')
-
         div.innerHTML        = compileMsg(2, filename);
-
-        handleCompileSuccess(disableDetectors, enableDetectors, result);
+        handleCompileSuccess(detectors, result);
       } else {
         handleCompileFailure(error);
       }
 
-      enableInput("#analyze")
-      enableInput('#enable-detectors')
-      enableInput('#disable-detectors')
+      helpers.enableInput("#analyze")
     });
   });
 

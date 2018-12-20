@@ -38,12 +38,18 @@
 		<script type="text/javascript" src="plugin.js"></script>
 		<script type="text/javascript" src="./assets/jquery.min.js"></script>
 		<script type="text/javascript" src="./assets/bootstrap.min.js"></script>
+		<style>
+			.detect {
+				display: block;  
+				width: 100%;
+			}
+		</style>
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	</head>
 	<body>
-		<div class="row" style="background: hsla(202, 91%, 75%, 1)">
+		<div class="row" style="background:rgba(0, 0,0 , 0.1);">
 			<div class="container">
 				<div style="padding:20px">
 				<div style="text-align: right; font-size: 14px;">
@@ -64,56 +70,32 @@
 			</div>
 		</div>
 		<div class="collapse" id="collapseExample">
-			<div class="card card-body" style="background: hsla(202, 91%, 75%, 1); border-radius: 0; border: none">
-				<form class="">
-						<div class="row">
-
-					<!-- <h4>High Severity</h4>
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-						<label class="form-check-label" for="defaultCheck1">
-							Default checkbox
-						</label>
-					</div>
-					<h4>Medium Severity</h4>
-					<h4>Low Severity</h4> -->
-					<div class="col-md-6 col-sm-6 col-xs-6">
-					<div class="form-group">
-						<label for="disable-detectors">Disable Detectors</label>
-						<input type="email" class="form-control mx-xs-1\2" id="disable-detectors" placeholder="Migrations.sol">
-						<small id="disbaleDetectorHelpBlock" class="form-text text-muted">
-							Detectors to exclude from slither analysis separated by comma
-						</small>
-					</div>
-					</div>
-					<div class="col-md-6 col-sm-6 col-xs-6">
-
-					<div class="form-group">
-						<label for="enable-detectors">Enable Detectors</label>
-						<input type="email" class="form-control mx-xs-2" id="enable-detectors" placeholder="Migrations.sol">
-						<small id="enableDetectorHelpBlock" class="form-text text-muted">
-							Detectors to only enable from slither analysis separated by comma
-						</small>
-					</div>
-					</div>
+			<div class="card card-body" style="background: rgba(0, 0,0 , 0.1); border-radius: 0; border: none">
+				<small class="text-danger">Uncheck the checkbox to disable the detector</small>
+				<div class="row">
+						<div class="col-md-6" style="padding-top: 10px">
+							<h6>High Severity</h6>
+							<div id="high" class="detect"></div>
+						</div>
+						<div class="col-md-6" style="padding-top: 10px">
+							<h6>Low Severity</h6>
+							<div id="low"  class="detect"></div>
+						</div>
+						<div class="col-md-6" style="padding-top: 10px">
+							<h6>Medium Severity</h6>
+							<div id="medium"  class="detect"></div>
+						</div>
+						<div class="col-md-6" style="padding-top: 10px">
+							<h6>Informational Severity</h6>
+							<div id="informational"  class="detect"></div>
+						</div>
 				</div>
-
-				</form>
 			</div>
 		</div>
 		<div class="container">
-			<!-- <div class="alert alert-warning alert-dismissible fade show" role="alert">
-				<strong>Holy guacamole!</strong> You should check in on some of those fields below.
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div> -->
 			<div id="heading" style="margin-top: 20px;"></div>
 			<div id="results" style="min-height: 600px; margin-top: 20px; margin-bottom: 20px; padding-bottom: 20px;">
 			</div>
 		</div>
-
-		
-
 	</body>
 </html>
