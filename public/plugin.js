@@ -107,7 +107,7 @@ function sortError(error){
 
 function getMessage(errorClass, funcParam, desc){
   function template(strings, errorClass, funcParam, desc){
-    let [ str0, str1, str2, str3 ] = strings;
+    const [ str0, str1, str2, str3 ] = strings;
     return `${str0}${errorClass}${str1}${funcParam}${str2}${desc}${str3}`
   }
 

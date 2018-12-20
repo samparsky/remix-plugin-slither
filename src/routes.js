@@ -4,20 +4,22 @@ import path from "path"
 import { exec } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
-    const { disableDetectors, enableDetectors, source: { target }, data } = req.body
-
-    const ast        = data['sources'][target].legacyAST
-    const astContent = JSON.stringify({
+    const { disableDetectors, enableDetectors, source: { sources, target }, data } = req.body
+    
+    const contractContent = sources[target].content
+    const ast             = data['sources'][target].legacyAST
+    const astContent      = JSON.stringify({
         ast,
         "sourcePath": target, 
     })
 
-    const fileDir    = `${path.dirname(target)}`
-    const outputFile = `${fileDir}/output.json`
-    const astPath    = `${fileDir}/ast.json`
+    const fileName     = target.split('/').pop();
+    const fileDir      = `${path.dirname(target)}`
+    const contractPath = `${fileDir}/${fileName}`
+    const outputFile   = `${fileDir}/output.json`
+    const astPath      = `${fileDir}/ast.json`
 
-    let cmd = `slither --solc-ast ${astPath} --disable-solc-warnings --json ${outputFile}`
-    
+    let cmd      = `slither --solc-ast ${astPath} --disable-solc-warnings --json ${outputFile}`
     let response = {
         "output": null,
         "error": null
@@ -35,10 +37,11 @@ const analyzeRouter = async function(req, res, next){
 
     try {
         shell.mkdir('-p', fileDir)
+        fs.writeFileSync(contractPath, contractContent)
         fs.writeFileSync(astPath, astContent)
-
+        
         // execute slither command
-        let {stderr} = await exec(cmd)
+        let { stderr }     = await exec(cmd)
         response["output"] = stderr
 
     } catch(error) {
@@ -51,6 +54,7 @@ const analyzeRouter = async function(req, res, next){
         }
     } finally {
         // delete file
+        fs.unlinkSync(contractPath)
         fs.unlinkSync(astPath)
         if(unlinkOutput) fs.unlinkSync(outputFile)
     }
