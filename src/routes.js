@@ -57,18 +57,16 @@ const analyzeRouter = async function(req, res, next){
 
 
 const listDetectors = async function(req, res, next){
+    let err    
     let response = {
         "output": null,
         "error": null
     }
 
-    try {
-        const cmd       = `slither --list-detectors-json`
-        let { stdout }  = await exec(cmd)
-        response.output = stdout
-    } catch(e) {
-        response.error = e['message'] || "An error occured"
-    }
+    const cmd       = `slither --list-detectors-json`
+    let { stdout }  = await exec(cmd).catch(e=>err=e)
+    response.output = stdout
+    if(err) response.error = err['message'] || "An error occured"
 
     return res.status(200).json(response)
 }
