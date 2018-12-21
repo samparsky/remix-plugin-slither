@@ -26,7 +26,7 @@ app.server.listen(process.env.PORT || port, async () => {
         Go in Remix ( https://remix.ethereum.org / https://remix-alpha.ethereum.org ) / settings tab,
         under the Plugin section paste the following declaration:\n
         {
-            "title": "slitherd",
+            "title": "Slither",
             "url": "http://<machine_ip>:${port}"
         }\n
         Then start the plugin by licking on its icon.

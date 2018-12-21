@@ -52,7 +52,7 @@ $ slitherd
     under the Plugin section paste the following declaration:
 
     {
-        "title": "slitherd",
+        "title": "Slither",
         "url": "http://127.0.0.1:8000"
     }
 
@@ -68,7 +68,7 @@ $ slitherd -p 9000
     under the Plugin section paste the following declaration:
 
     {
-        "title": "slitherd",
+        "title": "Slither",
         "url": "http://127.0.0.1:9000"
     }
 
@@ -88,7 +88,7 @@ $ slitherd -d
     under the Plugin section paste the following declaration:
 
     {
-        "title": "slitherd",
+        "title": "Slither",
         "url": "http://127.0.0.1:8000"
     }
 
