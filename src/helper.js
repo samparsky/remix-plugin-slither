@@ -65,9 +65,10 @@ const checkSlitherVersion = async (isDev) => {
 const validateDetectors = async(input) => {
     const cmd       = `slither --list-detectors-json`
     let { stdout }  = await exec(cmd).catch(e=>err=e)
-    let detectors = (JSON.parse(stdout)).map((item) => item['check'])
-    let user_input = input.split(",")
-    let difference = user_input.filter(x => !detectors.includes(x))
+    let detectors   = (JSON.parse(stdout)).map((item) => item['check'])
+    let user_input  = input.split(",")
+    let difference  = user_input.filter(x => !detectors.includes(x))
+    
     return difference.length == 0
 }
 
