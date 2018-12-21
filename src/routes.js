@@ -1,26 +1,38 @@
 import shell from "shelljs"
 import fs from "fs"
 import path from "path"
-import { exec } from "./helper"
+import { exec, validateDetectors } from "./helper"
 
 const analyzeRouter = async function(req, res, next){
     const { detectors, source: { sources, target }, data } = req.body
 
-    const fileDir      = `${path.dirname(target)}`
-    const outputFile   = `${fileDir}/output.json`
-    
-    let cmd      = `slither --solc-ast ${fileDir}/ --splitted --detect ${detectors} --disable-solc-warnings --json ${outputFile}`
     let response = {
         "output": null,
         "error": null
     }
+    
+    const v = await validateDetectors(detectors)
+    if(!v) {
+        response.error = "Invalid detectors"
+        return res.status(200).json(response)
+    }
+
+    const fileDir      = `${path.dirname(target)}`
+    const outputFile   = `${fileDir}/output.json`
+
+    let cmd      = `slither --solc-ast ${fileDir}/ --splitted --detect ${detectors} --disable-solc-warnings --json ${outputFile}`
 
     try {
         shell.mkdir('-p', fileDir)
         
         // write ast file
         for(let source in data['sources']){
-            const fileName        = (source.split('/').pop()).split('.').reverse().pop()
+            const fileName        = (source.split('/')
+                                        .pop())
+                                        .split('.')
+                                        .reverse()
+                                        .pop()
+
             const ast             = data['sources'][source].legacyAST
             const astPath         = `${fileDir}/${fileName}.json`
             const astContent      = JSON.stringify({
@@ -32,7 +44,12 @@ const analyzeRouter = async function(req, res, next){
 
         // write .sol file
         for(let source in sources){
-            const fileName        = (source.split('/').pop()).split('.').reverse().pop()
+            const fileName        = (source.split('/')
+                                        .pop())
+                                        .split('.')
+                                        .reverse()
+                                        .pop()
+
             const contractContent = sources[source].content
             const contractPath    = `${fileDir}/${fileName}.sol`
             fs.writeFileSync(contractPath, contractContent)
