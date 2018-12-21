@@ -137,7 +137,7 @@ function displayDetectors(detectors) {
 }
 
 function goToLine(func){
-    const position = JSON.stringify(
+  const position = JSON.stringify(
       { "start": {
         "line": 
           (func['source_mapping']['lines'][0] == 0) ? 0 : (func['source_mapping']['lines'][0]-1) 
@@ -184,7 +184,9 @@ function formatError(error){
     "Low":           "alert-info",
   }
 
-  const sortedError = helpers.sortError(error)
+  let sortedError = helpers.sortError(error)
+  // filter out remix_test.sol cos its dynamically injected
+  sortedError = sortedError.filter((item) => !item['description'].includes("remix_test"))
 
   const html = sortedError.map((err, index) => {
     const item      = sortedError[index]
@@ -293,7 +295,7 @@ window.onload = async function () {
     let div       = document.querySelector('div#results');
     div.innerHTML = compileMsg(1);
 
-    extension.call('compiler', 'getCompilationResult', [], function (error, result ) {      
+    extension.call('compiler', 'getCompilationResult', [], function (error, result ) {
       if(result[0]) {
         const filename       = result[0]['source']['target'];
         div.innerHTML        = compileMsg(2, filename);
